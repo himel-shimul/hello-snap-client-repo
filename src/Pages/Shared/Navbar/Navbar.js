@@ -75,11 +75,16 @@ const Navbar = () => {
       </div>
       <div className="navbar-end">
         {/* <a className="btn">Get started</a> */}
-        { user?.uid && <div className="avatar">
+        { user?.photoURL ? <div className="avatar">
           <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-            <img src="https://placeimg.com/192/192/people" />
+            <img src={user?.photoURL} />
           </div>
-        </div>}
+        </div> : 
+        <div className="avatar">
+        <div className="w-10 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+          <img src="https://placeimg.com/192/192/people" />
+        </div>
+      </div>}
       </div>
     </div>
   );

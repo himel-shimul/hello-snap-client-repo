@@ -54,7 +54,7 @@ const MakePost = () => {
 
 
   return (
-    <div className="card w-[1000px] bg-base-100 shadow-xl mx-auto">
+    <div className="card w-[1000px] bg-base-100 shadow-xl my-12 mx-auto">
       <div className="card-body  mx-auto ">
         <h2 className="card-title">Make a post</h2>
         <form onSubmit={handleSubmit(handleLogin)}>

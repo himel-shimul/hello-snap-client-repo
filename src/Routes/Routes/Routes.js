@@ -5,7 +5,9 @@ import About from "../../Pages/About/About";
 import Home from "../../Pages/Home/Home/Home";
 import Media from "../../Pages/Media/Media";
 import PostDetails from "../../Pages/Media/PostDetails/PostDetails";
+import Message from "../../Pages/Message/Message";
 import SignUp from "../../SignUp/SignUp";
+import PrivateRoute from "../PrivateRoute/PrivateRoute";
 
 const router = createBrowserRouter([
     {
@@ -25,6 +27,10 @@ const router = createBrowserRouter([
                 element: <SignUp></SignUp>
             },
             {
+                path: '/message',
+                element: <Message></Message>
+            },
+            {
                 path: '/media',
                 element: <Media></Media>
             },
@@ -35,7 +41,7 @@ const router = createBrowserRouter([
             },
             {
                 path: '/about',
-                element: <About></About>
+                element: <PrivateRoute><About></About></PrivateRoute>
             },
         ]
     }
