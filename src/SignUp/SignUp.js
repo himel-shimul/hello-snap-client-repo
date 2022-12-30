@@ -1,12 +1,14 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthProvider";
 
 const SignUp = () => {
-  const {createUser} = useContext(AuthContext);
+  const {createUser, updateUserProfile} = useContext(AuthContext);
     const { register, formState: { errors }, handleSubmit } = useForm();
-    const [err, setErr] = useState('');
+    // const [err, setErr] = useState('');
+    const navigate = useNavigate();
+
     
     const handleSignUp = data =>{
         // setErr('');
@@ -15,11 +17,46 @@ const SignUp = () => {
         .then(res => {
           const user = res.user;
           console.log(user);
+          handleUpdateUserProfile(data.name);
+
+          const userInfo = {
+            displayName: data.name,
+            email: data.email,
+            image: data?.image,
+
+          }
+          fetch("https://hello-server-steel.vercel.app/addUserInfo", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+      },
+      body: JSON.stringify(userInfo),
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        console.log(data);
+        if (data.acknowledged) {
+            // setUsr(null);
+        //   toast.success("added Successfully");
+        navigate('/');
+        }
+      });
         })
         .catch(err => {
           console.error(err);
         })
 
+    }
+    const handleUpdateUserProfile = (name) =>{
+      
+      const profile = {
+        displayName: name
+
+      }
+      
+      updateUserProfile(profile)
+        .then({})
+        .catch(error => console.error(error))
     }
   return (
     <div>

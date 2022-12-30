@@ -1,12 +1,18 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
+import { Navigate } from "react-router-dom";
+import { AuthContext } from "../../../contexts/AuthProvider";
 
 const MakePost = () => {
+  const {user} = useContext(AuthContext);
+  
+
   const { register, handleSubmit } = useForm();
   const imageHostKey = process.env.REACT_APP_imgbb_key;
   console.log(imageHostKey);
   const handleLogin = data =>{
-    console.log(data.image);
+    console.log(data);
     const image = data.image[0];
     const formData = new FormData();
     formData.append('image', image);
@@ -16,9 +22,32 @@ const MakePost = () => {
         body: formData
     })
     .then(res => res.json())
-    .then(data => {
-        if(data.success){
-            console.log(data.data.url);
+    .then(imgData => {
+        if(imgData.success){
+            // console.log(imgData.data.url);
+            const post = {
+              userName: user.displayName,
+              email: user.email,
+              script: data.post,
+              userImage: user?.photoURL,
+              postImage: imgData.data.url
+            }
+            // console.log(post);
+            fetch('https://hello-server-steel.vercel.app/allPosts', {
+              method: 'POST',
+              headers: {
+                'content-type': 'application/json',
+              },
+              body: JSON.stringify(post)
+            })
+            .then(res => res.json())
+            .then(data => {
+              if(data.acknowledged){
+                toast.success("Add Successfully");
+                Navigate('/media')
+                  // form.reset();
+              }
+            })
         }
     })
   }
@@ -59,10 +88,10 @@ const MakePost = () => {
           {/* <p>{data}</p> */}
           <input className="btn btn-info" value='Submit' type="submit" />
         </form>
-        <p>If a dog chews shoes whose shoes does he choose?</p>
+        {/* <p>If a dog chews shoes whose shoes does he choose?</p>
         <div className="card-actions justify-end">
           <button className="btn btn-primary">Buy Now</button>
-        </div>
+        </div> */}
       </div>
     </div>
   );

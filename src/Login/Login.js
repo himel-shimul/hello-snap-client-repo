@@ -1,6 +1,7 @@
+import { GoogleAuthProvider } from "firebase/auth";
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { AuthContext } from "../contexts/AuthProvider";
 
 const Login = () => {
@@ -11,7 +12,49 @@ const Login = () => {
   } = useForm();
   const [err, setErr] = useState("");
   const [loginErr, setLoginErr] = useState("");
-  const { signIn } = useContext(AuthContext);
+  const { signIn, googleLogIn } = useContext(AuthContext);
+  const location = useLocation();
+  const navigate = useNavigate();
+
+  const from = location.state?.from?.pathname || "/";
+
+  const googleProvider = new GoogleAuthProvider();
+  const handleGoogleSignIn = () =>{
+    googleLogIn(googleProvider)
+    .then( res =>{
+      const user = res.user;
+      console.log(user);
+      const userInfo = {
+        displayName: user.displayName,
+        email: user.email,
+        image: user?.photoURL,
+
+      }
+      fetch("https://hello-server-steel.vercel.app/addUserInfo", {
+  method: "POST",
+  headers: {
+    "content-type": "application/json",
+  },
+  body: JSON.stringify(userInfo),
+})
+  .then((res) => res.json())
+  .then((data) => {
+    console.log(data);
+    if (data.acknowledged) {
+      navigate(from, {replace: true})
+
+    }
+  });
+    })
+    .catch(err => {
+      console.error(err);
+    
+  })
+  .catch(err =>{
+    console.error(err);
+    
+  })
+  }
 
   const handleLogin = (data) => {
     setLoginErr("");
@@ -20,6 +63,8 @@ const Login = () => {
       .then((res) => {
         const user = res.user;
         console.log(user);
+            navigate(from, {replace: true})
+
       })
       .catch((err) => {
         console.error(err);
@@ -85,7 +130,7 @@ const Login = () => {
             </Link>
           </p>
           <div className="divider">OR</div>
-          <button className="btn btn-outline w-full">
+          <button onClick={handleGoogleSignIn} className="btn btn-outline w-full">
             CONTINUE WITH GOOGLE
           </button>
         </div>
